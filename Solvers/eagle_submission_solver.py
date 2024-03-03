@@ -15,7 +15,6 @@ def init_eagle(team_id):
     If a sucessful response is returned, you will recive back the first footprints.
     '''
     global loaded_model
-    loaded_model = tf.keras.models.load_model(model_path)
 
     '''
                     3.1Start Game
@@ -42,6 +41,7 @@ def init_eagle(team_id):
         "teamId": team_id
     }
     res = requests.post(url, json=data)
+
 
     if res.ok:
         res = res.json()
@@ -137,6 +137,7 @@ def skip_msg(team_id:str):
         # Make a POST request to skip the message
         res = requests.post(url, json=data)
 
+
         if res.ok:
 
             res_json = res.json()
@@ -193,6 +194,7 @@ def request_msg(team_id:str, channel_id:int):
         "channelId": channel_id
     }
     res = requests.post(url, json=data)
+
     
     if res.ok:
         res = res.json()
@@ -250,6 +252,7 @@ def submit_msg(team_id:str, decoded_msg:str):
         "decodedMsg": decoded_msg
     }
     res = requests.post(url, json=data)
+
     if res.ok:
         res = res.json()
         print(f"submit_msg {res}")
@@ -296,6 +299,7 @@ def end_eagle(team_id:str):
     data = {
         "teamId": team_id}
     res = requests.post(url, json=data)
+
     if res.ok:
         print(f"end {res}")
 
@@ -322,16 +326,16 @@ def submit_eagle_attempt(team_id:str):
             footprint = skip_msg(team_id)
         else:
             encoded_msg = request_msg(team_id, channel_id)
-            decoded_msg = decode(encoded_msg)
-            footprint = submit_msg(team_id, decoded_msg)
+            decoded_msg = decode(np.array(encoded_msg))
+            footprint = submit_msg(team_id, str(decoded_msg))
 
     end_eagle(team_id)
 
 #submit_eagle_attempt(team_id)
     
-url ="http://13.53.169.72:5000/attempts/professional"
-data = {
-        "teamId": team_id
-        }
-res = requests.post(url, json=data)
-print(res.json())
+# url ="http://13.53.169.72:5000/attempts/professional"
+# data = {
+#         "teamId": team_id
+#         }
+# res = requests.post(url, json=data)
+# print(res.ok)
