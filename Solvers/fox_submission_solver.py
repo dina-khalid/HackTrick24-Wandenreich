@@ -3,10 +3,25 @@ import numpy as np
 from LSBSteg import encode
 from riddle_solvers import riddle_solvers
 
-api_base_url = None
-team_id=None
+api_base_url = "16.171.171.147:5000"
+team_id="bVUrA0A"
 
 def init_fox(team_id):
+
+    url = api_base_url+"/fox/start"
+    data = {
+        "teamId": team_id
+    }
+
+    res = requests.post(url, data=data)
+
+    if res.status_code == 200:
+        res = res.json()
+        real_message = res["msg"]
+        carrier_image = res["carrier_image"]
+        return real_message, carrier_image
+    else:
+        print("An Error occurred! status code:", res.status_code)
     '''
     In this fucntion you need to hit to the endpoint to start the game as a fox with your team id.
     If a sucessful response is returned, you will recive back the message that you can break into chunkcs
@@ -25,6 +40,22 @@ def generate_message_array(message, image_carrier):
     pass 
 
 def get_riddle(team_id, riddle_id):
+
+    url = api_base_url+"/fox/get-riddle"
+    data = {
+        "teamId": team_id,
+        "riddleId": riddle_id
+    }
+
+    res = requests.post(url, data=data)
+
+    if res.status_code == 200:
+        res = res.json()
+        return res["test_case"]
+    else:
+        print("An Error occurred! status code:", res.status_code)
+
+    
     '''
     In this function you will hit the api end point that requests the type of riddle you want to solve.
     use the riddle id to request the specific riddle.
@@ -36,7 +67,28 @@ def get_riddle(team_id, riddle_id):
     '''
     pass
 
-def solve_riddle(team_id, solution):
+def solve_riddle(team_id, riddle_id, solution):
+    
+    input = get_riddle(team_id, riddle_id) 
+    ans = solution(input)
+
+    url = api_base_url+"/fox/get-riddle"
+    data = {
+        "teamId": team_id,
+        "solution": ans
+    }
+
+    res = requests.post(url, data=data)
+
+    if res.status_code == 200:
+        res = res.json()
+        inc = res["budget_increase"]
+        tot = res["total_budget"]
+        status = res["status"]
+        return inc, tot, status
+    else:
+        print("An Error occurred! status code:", res.status_code)
+
     '''
     In this function you will solve the riddle that you have requested. 
     You will hit the API end point that submits your answer.
@@ -63,12 +115,33 @@ def end_fox(team_id):
     pass
 
 def submit_fox_attempt(team_id):
+
+    real_message, carrier_image = init_fox(team_id)
+
+    riddle_id = "problem_solving_easy"
+    inc, budget, status = solve_riddle(team_id, riddle_id, riddle_solvers[riddle_id])
+    if inc == 1: print("the soluion of the medium problem solving riddle is correct")
+    else: print("the soluion of the medium problem solving riddle is wrong")
+
+    riddle_id = "problem_solving_medium"
+    inc, budget, status = solve_riddle(team_id, riddle_id, riddle_solvers[riddle_id])
+    if inc == 2: print("the soluion of the medium problem solving riddle is correct")
+    else: print("the soluion of the medium problem solving riddle is wrong")
+
+    riddle_id = "problem_solving_hard"
+    inc, budget, status = solve_riddle(team_id, riddle_id, riddle_solvers[riddle_id])
+    if inc == 3: print("the soluion of the medium problem solving riddle is correct")
+    else: print("the soluion of the medium problem solving riddle is wrong")
+
+    
+    
+
     '''
      Call this function to start playing as a fox. 
      You should submit with your own team id that was sent to you in the email.
      Remeber you have up to 15 Submissions as a Fox In phase1.
      In this function you should:
-        1. Initialize the game as fox 
+        1. Initialize the game as fox
         2. Solve riddles 
         3. Make your own Strategy of sending the messages in the 3 channels
         4. Make your own Strategy of splitting the message into chunks
