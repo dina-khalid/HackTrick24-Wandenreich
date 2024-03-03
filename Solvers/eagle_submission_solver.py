@@ -1,11 +1,11 @@
 import numpy as np
-from LSBSteg import decode
+from LSBSteg import decode, encode
 import tensorflow as tf
 import requests
-
+from cv2 import imread
 # api_base_url = '16.171.171.147'
 team_id= 111
-model_path = '/home/dina/HackTrick24/cnn_dell.h5'
+model_path = 'cnn_dell.h5'
 loaded_model = tf.keras.models.load_model(model_path)
 
 def init_eagle(team_id):
@@ -70,13 +70,13 @@ def preprocess_input_data(input_data):
     return processed_data
 
 def infer(input_data):
-    global model
+    global loaded_model
     # Preprocess input data
     pro_data = preprocess_input_data(input_data)
     input_data_reshaped = pro_data.reshape((pro_data.shape[0],) + pro_data.shape[1:] + (1,))
 
     # Perform inference
-    predictions_prob = model.predict(input_data_reshaped)
+    predictions_prob = loaded_model.predict(input_data_reshaped)
 
     return predictions_prob
 
@@ -90,7 +90,7 @@ def select_channel(footprint):
     probabilities = infer(footprint)
     threshold = 0.5
     if max(probabilities) > threshold:
-        return probabilities.index(max(probabilities)) + 1
+        return list(probabilities).index(max(probabilities)) + 1
     else:
         return -1
 
@@ -314,8 +314,3 @@ def submit_eagle_attempt(team_id):
     end_eagle(team_id)
 
 # submit_eagle_attempt(team_id)
-real = np.load('/home/dina/HackTrick24/real.npz')
-real_x = real['x']
-input_data =  {'1': list(real_x[0]), '2':list(real_x[1]), '3':list(real_x[2])}
-channel_id = select_channel(input_data)
-print(channel_id)
