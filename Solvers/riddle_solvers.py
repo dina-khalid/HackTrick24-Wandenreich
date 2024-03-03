@@ -2,6 +2,7 @@
 import pandas as pd
 import torch
 from utils import *
+import numpy as np
 
 
 def solve_cv_easy(test_case: tuple) -> list:
@@ -22,7 +23,7 @@ def solve_cv_easy(test_case: tuple) -> list:
 
 
 def solve_cv_medium(input: tuple) -> list:
-    combined_image_array , patch_image_array = test_case
+    combined_image_array , patch_image_array = input
     combined_image = np.array(combined_image_array,dtype=np.uint8)
     patch_image = np.array(patch_image_array,dtype=np.uint8)
     """

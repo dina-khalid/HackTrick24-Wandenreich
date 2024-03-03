@@ -1,10 +1,10 @@
 import requests
 import numpy as np
-from LSBSteg import encode
+from Solvers.LSBSteg import encode
 from riddle_solvers import riddle_solvers
 
-api_base_url = "16.171.171.147:5000"
-team_id="bVUrA0A"
+# api_base_url = "16.171.171.147:5000"
+# team_id="bVUrA0A"
 
 def init_fox(team_id):
 
@@ -27,7 +27,6 @@ def init_fox(team_id):
     If a sucessful response is returned, you will recive back the message that you can break into chunkcs
       and the carrier image that you will encode the chunk in it.
     '''
-    pass
 
 def generate_message_array(message, image_carrier):  
     '''
@@ -65,7 +64,6 @@ def get_riddle(team_id, riddle_id):
         3. You cannot request several riddles at a time, so requesting a new riddle without answering the old one
           will allow you to answer only the new riddle and you will have no access again to the old riddle. 
     '''
-    pass
 
 def solve_riddle(team_id, riddle_id, solution):
     
@@ -94,7 +92,6 @@ def solve_riddle(team_id, riddle_id, solution):
     You will hit the API end point that submits your answer.
     Use te riddle_solvers.py to implement the logic of each riddle.
     '''
-    pass
 
 def send_message(team_id, messages, message_entities=['F', 'E', 'R']):
     '''
@@ -154,7 +151,6 @@ def submit_fox_attempt(team_id):
             2.b. You cannot send 3 E(Empty) messages, there should be atleast R(Real)/F(Fake)
         3. Refer To the documentation to know more about the API handling 
     '''
-    pass 
 
 
 submit_fox_attempt(team_id)
