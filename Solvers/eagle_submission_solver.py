@@ -1,12 +1,13 @@
 import numpy as np
-from LSBSteg import decode, encode
+from LSBSteg import decode
 import tensorflow as tf
 import requests
-from cv2 import imread
-# api_base_url = '16.171.171.147'
-team_id= 111
+
+api_base_url = 'http://16.171.171.147:5000'
+team_id= "bVUrA0A"
 model_path = 'cnn_dell.h5'
 loaded_model = tf.keras.models.load_model(model_path)
+
 
 def init_eagle(team_id):
     '''
@@ -40,13 +41,15 @@ def init_eagle(team_id):
     data = {
         "teamId": team_id
     }
-    res = requests.post(url, data=data)
+    res = requests.post(url, json=data)
     if res.status_code == 200:
         res = res.json()
         footprint = res["footprint"]
+        print(f"init_eagle {res}")
         return footprint
     else:
         print("An Error occurred in init_eagle! status code:", res.status_code)
+        return None
 
 
 
@@ -96,7 +99,7 @@ def select_channel(footprint):
 
 
   
-def skip_msg(team_id):
+def skip_msg(team_id:str):
     '''
     If you decide to NOT listen to ANY of the 3 channels then you need to hit the end point skipping the message.
     If sucessful request to the end point , you will expect to have back new footprints IF ANY.
@@ -132,15 +135,15 @@ def skip_msg(team_id):
     try:
         # Make a POST request to skip the message
         res = requests.post(url, json=data)
-        res.raise_for_status()
 
         if res.status_code == 200:
             res_json = res.json()
+            print(f"skip_msg {res}")
+
 
             if "nextFootprint" in res_json:
                 next_footprint_data = res_json["nextFootprint"]
-                next_footprint = {key: np.array(value) for key, value in next_footprint_data.items()}
-                return next_footprint
+                return next_footprint_data
             else:
                 print("End of message reached")
                 return None
@@ -155,7 +158,7 @@ def skip_msg(team_id):
   
 
 
-def request_msg(team_id, channel_id):
+def request_msg(team_id:str, channel_id:int):
     '''
     If you decide to listen to any of the 3 channels then you need to hit the end point of selecting a channel to hear on (1,2 or 3)
     '''
@@ -187,17 +190,21 @@ def request_msg(team_id, channel_id):
         "teamId": team_id,
         "channelId": channel_id
     }
-    res = requests.post(url, data=data)
+    res = requests.post(url, json=data)
     if res.status_code == 200:
         res = res.json()
         encodedMsg = res["encodedMsg"]
+
+        print(f"request_msg {res}")
+
         return encodedMsg
     else:
         print("An Error in request_msg! status code:", res.status_code)
+        return None
 
 
 
-def submit_msg(team_id, decoded_msg):
+def submit_msg(team_id:str, decoded_msg:str):
     '''
     In this function you are expected to:
         1. Decode the message you requested previously
@@ -239,9 +246,10 @@ def submit_msg(team_id, decoded_msg):
         "teamId": team_id,
         "decodedMsg": decoded_msg
     }
-    res = requests.post(url, data=data)
+    res = requests.post(url, json=data)
     if res.status_code == 200:
         res = res.json()
+        print(f"submit_msg {res}")
         if "nextFootprint" in res:
             next_footprint = res["nextFootprint"]
             return next_footprint
@@ -250,13 +258,14 @@ def submit_msg(team_id, decoded_msg):
             return None
     else:
         print("An Error in submit_msg! status code:", res.status_code)
+        return None
 
 
 
 
 
   
-def end_eagle(team_id):
+def end_eagle(team_id:str):
     '''
     Use this function to call the api end point of ending the eagle  game.
     Note that:
@@ -283,13 +292,15 @@ def end_eagle(team_id):
     url = api_base_url+"/eagle/end-game"
     data = {
         "teamId": team_id}
-    res = requests.post(url, data=data)
+    res = requests.post(url, json=data)
     if res.status_code == 200:
-        print(res.text)
+        print(f"end {res}")
+
     else:
         print("An Error in end_eagle! status code:", res.status_code)
+        return None
 
-def submit_eagle_attempt(team_id):
+def submit_eagle_attempt(team_id:str):
     '''
      Call this function to start playing as an eagle. 
      You should submit with your own team id that was sent to you in the email.
@@ -313,4 +324,11 @@ def submit_eagle_attempt(team_id):
 
     end_eagle(team_id)
 
-# submit_eagle_attempt(team_id)
+#submit_eagle_attempt(team_id)
+    
+url ="http://13.53.169.72:5000/attempts/professional"
+data = {
+        "teamId": team_id
+        }
+res = requests.post(url, json=data)
+print(res.json())
