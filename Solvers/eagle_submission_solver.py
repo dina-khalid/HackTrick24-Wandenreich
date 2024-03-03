@@ -42,7 +42,8 @@ def init_eagle(team_id):
         "teamId": team_id
     }
     res = requests.post(url, json=data)
-    if res.status_code == 200:
+
+    if res.ok:
         res = res.json()
         footprint = res["footprint"]
         print(f"init_eagle {res}")
@@ -136,7 +137,8 @@ def skip_msg(team_id:str):
         # Make a POST request to skip the message
         res = requests.post(url, json=data)
 
-        if res.status_code == 200:
+        if res.ok:
+
             res_json = res.json()
             print(f"skip_msg {res}")
 
@@ -191,7 +193,8 @@ def request_msg(team_id:str, channel_id:int):
         "channelId": channel_id
     }
     res = requests.post(url, json=data)
-    if res.status_code == 200:
+    
+    if res.ok:
         res = res.json()
         encodedMsg = res["encodedMsg"]
 
@@ -247,7 +250,7 @@ def submit_msg(team_id:str, decoded_msg:str):
         "decodedMsg": decoded_msg
     }
     res = requests.post(url, json=data)
-    if res.status_code == 200:
+    if res.ok:
         res = res.json()
         print(f"submit_msg {res}")
         if "nextFootprint" in res:
@@ -293,7 +296,7 @@ def end_eagle(team_id:str):
     data = {
         "teamId": team_id}
     res = requests.post(url, json=data)
-    if res.status_code == 200:
+    if res.ok:
         print(f"end {res}")
 
     else:
