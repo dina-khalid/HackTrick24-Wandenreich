@@ -114,6 +114,17 @@ def solve_sec_hard(input:tuple)->str:
     return ''
 
 def solve_problem_solving_easy(input: tuple) -> list:
+
+    a, k = input
+    freq = {}
+    for i in a:
+        freq[i] = freq.get(i,0) + 1
+
+    ans = [(-freq[key], key) for key in freq]
+    ans.sort()
+    ans = [pair[1] for pair in ans[:k]]
+    return ans
+
     """
     This function takes a tuple as input and returns a list as output.
 
@@ -129,6 +140,25 @@ def solve_problem_solving_easy(input: tuple) -> list:
 
 
 def solve_problem_solving_medium(input: str) -> str:
+
+    rep = 0
+    out = ""
+    stk = []
+    for i in input:
+        if i >= '0' and i <= '9':
+            rep*=10
+            rep+=int(i)
+        elif i == '[':
+            stk.append((out, rep))
+            rep = 0
+            out = ""
+        elif i == ']':
+            s, rp = stk.pop()
+            out = s+out*rp
+        else:
+            out+=i
+    return out
+
     """
     This function takes a string as input and returns a string as output.
 
@@ -142,6 +172,18 @@ def solve_problem_solving_medium(input: str) -> str:
 
 
 def solve_problem_solving_hard(input: tuple) -> int:
+
+    n, m = input
+
+    dp = [[0 for _ in range(m)] for _ in range(n)]
+
+    dp[0][0] = 1
+    for i in range(n):
+        for j in range(m):
+            if i > 0: dp[i][j]+=dp[i-1][j]
+            if j > 0: dp[i][j]+=dp[i][j-1]
+    return dp[n-1][m-1]
+
     """
     This function takes a tuple as input and returns an integer as output.
 
