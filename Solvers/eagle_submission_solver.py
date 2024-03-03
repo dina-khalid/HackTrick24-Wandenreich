@@ -46,10 +46,8 @@ def init_eagle(team_id):
     if res.ok:
         res = res.json()
         footprint = res["footprint"]
-        print(f"init_eagle {res}")
         return footprint
     else:
-        print("An Error occurred in init_eagle! status code:", res.status_code)
         return None
 
 
@@ -141,22 +139,18 @@ def skip_msg(team_id:str):
         if res.ok:
 
             res_json = res.json()
-            print(f"skip_msg {res}")
 
 
             if "nextFootprint" in res_json:
                 next_footprint_data = res_json["nextFootprint"]
                 return next_footprint_data
             else:
-                print("End of message reached")
                 return None
 
         else:
-            print("An error occurred in skip_msg! Status code:", res.status_code)
             return None
 
     except requests.exceptions.RequestException as err:
-        print("Request Error:", err)
         return None
   
 
@@ -200,11 +194,9 @@ def request_msg(team_id:str, channel_id:int):
         res = res.json()
         encodedMsg = res["encodedMsg"]
 
-        print(f"request_msg {res}")
 
         return encodedMsg
     else:
-        print("An Error in request_msg! status code:", res.status_code)
         return None
 
 
@@ -255,15 +247,12 @@ def submit_msg(team_id:str, decoded_msg:str):
 
     if res.ok:
         res = res.json()
-        print(f"submit_msg {res}")
         if "nextFootprint" in res:
             next_footprint = res["nextFootprint"]
             return next_footprint
         else:
-            print("End of message reached")
             return None
     else:
-        print("An Error in submit_msg! status code:", res.status_code)
         return None
 
 
@@ -304,7 +293,6 @@ def end_eagle(team_id:str):
         print(f"end {res}")
 
     else:
-        print("An Error in end_eagle! status code:", res.status_code)
         return None
 
 def submit_eagle_attempt(team_id:str):
