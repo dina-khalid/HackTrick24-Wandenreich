@@ -2,27 +2,11 @@
 import pandas as pd
 import torch
 import numpy as np
-import pickle
 
 
-
-
-def loaded_model(pth_model):
-    with open(pth_model, 'rb') as f:
-        loaded_model = pickle.load(f)
-    return loaded_model
-
-
-model = loaded_model()
-
-
-def make_prediction(df):
-    global model
+def make_prediction(df,model):
     return list(model.forecast(steps=df.shape[0]))
     
-
-
-
 
 def solve_cv_easy(test_case: tuple) -> list:
     shredded_image, shred_width = test_case
@@ -76,9 +60,7 @@ def solve_cv_hard(input: tuple) -> int:
     return 0
 
 
-def solve_ml_easy(input: pd.DataFrame) -> list:
-    data = pd.DataFrame(data)
-
+def solve_ml_easy(input: pd.DataFrame, model) -> list:
     """
     This function takes a pandas DataFrame as input and returns a list as output.
 
@@ -88,7 +70,7 @@ def solve_ml_easy(input: pd.DataFrame) -> list:
     Returns:
     list: A list of floats representing the output of the function.
     """
-    return make_prediction(data)
+    return make_prediction(input,model)
 
 
 def solve_ml_medium(input: list) -> int:
@@ -156,7 +138,6 @@ def solve_problem_solving_easy(input: tuple) -> list:
     Returns:
     list: A list of strings representing the solution to the problem.
     """
-    return []
 
 
 def solve_problem_solving_medium(input: str) -> str:
@@ -188,7 +169,6 @@ def solve_problem_solving_medium(input: str) -> str:
     Returns:
     str: A string representing the solution to the problem.
     """
-    return ''
 
 
 def solve_problem_solving_hard(input: tuple) -> int:
@@ -213,7 +193,6 @@ def solve_problem_solving_hard(input: tuple) -> int:
     Returns:
     int: An integer representing the solution to the problem.
     """
-    return 0
 
 
 riddle_solvers = {
