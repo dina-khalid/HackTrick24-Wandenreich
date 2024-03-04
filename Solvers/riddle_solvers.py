@@ -1,8 +1,27 @@
 # Add the necessary imports here
 import pandas as pd
 import torch
-from utils import *
 import numpy as np
+import pickle
+
+
+
+
+def loaded_model(pth_model):
+    with open(pth_model, 'rb') as f:
+        loaded_model = pickle.load(f)
+    return loaded_model
+
+
+model = loaded_model()
+
+
+def make_prediction(df):
+    global model
+    return list(model.forecast(steps=df.shape[0]))
+    
+
+
 
 
 def solve_cv_easy(test_case: tuple) -> list:
@@ -69,7 +88,7 @@ def solve_ml_easy(input: pd.DataFrame) -> list:
     Returns:
     list: A list of floats representing the output of the function.
     """
-    return []
+    return make_prediction(data)
 
 
 def solve_ml_medium(input: list) -> int:
