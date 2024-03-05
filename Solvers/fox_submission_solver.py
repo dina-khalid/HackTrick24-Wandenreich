@@ -2,19 +2,18 @@ import requests
 import numpy as np
 from LSBSteg import encode
 from riddle_solvers import riddle_solvers
-import pickle
+# import pickle
 
 
-def loaded_model(pth_model):
-    with open(pth_model, 'rb') as f:
-        loaded_model = pickle.load(f)
-    return loaded_model
+# def loaded_model(pth_model):
+#     with open(pth_model, 'rb') as f:
+#         loaded_model = pickle.load(f)
+#     return loaded_model
 
-
-model = loaded_model('arima_model.pkl')
+# model = loaded_model('arima_model.pkl')
 
 api_base_url = "http://16.171.171.147:5000"
-#team_id="bVUrA0A"
+team_id="bVUrA0A"
 
 def init_fox(team_id: str):
     """
@@ -56,7 +55,9 @@ def init_fox(team_id: str):
       and the carrier image that you will encode the chunk in it.
     '''
 
-def generate_message_array(message: str, image_carrier: np.array):  
+fake = ["Dellete", 'Deloite', 'Delokty', 'Dellolo']
+enc_fake = 4*[]
+def generate_message_array(start_idx: int, message: str, image_carrier: np.array):
     '''
     In this function you will need to create your own startegy. That includes:
         1. How you are going to split the real message into chunkcs
@@ -65,11 +66,22 @@ def generate_message_array(message: str, image_carrier: np.array):
         4. Encode each chunck in the image carrier  
     '''
     # simple algo that sends the message in one chunk
-    fake = ["Dellete", 'Deloite']
+
     encoded_message = encode(image_carrier.copy(), message)
-    enc_fake1 = encode(image_carrier.copy(), fake[0])
-    enc_fake2 = encode(image_carrier.copy(), fake[1])
-    return [encoded_message.tolist(), enc_fake1.tolist(), enc_fake2.tolist()], ['R', 'F', 'F']
+
+    msg = encoded_message.tolist()
+    len = len(msg)
+    chunk = 2*[]
+    chunk[0] = msg[:len//2]
+    chunk[1] = msg[len//2:]
+
+    for i in range(4):
+        enc_fake[i] = encode(image_carrier.copy(), fake[i])
+
+    # enc_fake1 = encode(image_carrier.copy(), fake[0])
+    # enc_fake2 = encode(image_carrier.copy(), fake[1])
+    
+    return [chunk[start_idx//2].tolist(), enc_fake[start_idx].tolist(), enc_fake[start_idx+1].tolist()], ['R', 'F', 'F']
 
 
 
@@ -281,14 +293,17 @@ def submit_fox_attempt(team_id):
     if inc == 3: print("the soluion of the medium problem solving riddle is correct")
     else: print("the soluion of the medium problem solving riddle is wrong")
 
-    riddle_id = "ml_easy"
-    test_case = get_riddle(team_id, riddle_id)
+    # riddle_id = "ml_easy"
+    # test_case = get_riddle(team_id, riddle_id)
 
-    inc, budget, status = solve_riddle(team_id, riddle_solvers[riddle_id](test_case, model))
-    if inc == 1: print("the soluion of the medium problem solving riddle is correct")
-    else: print("the soluion of the medium problem solving riddle is wrong")
+    # inc, budget, status = solve_riddle(team_id, riddle_solvers[riddle_id](test_case, model))
+    # if inc == 1: print("the soluion of the medium problem solving riddle is correct")
+    # else: print("the soluion of the medium problem solving riddle is wrong")
 
-    encoded_messages, message_entities = generate_message_array(real_message, carrier_image)
+    encoded_messages, message_entities = generate_message_array(0, real_message, carrier_image)
+    send_message(team_id, encoded_messages, message_entities)
+
+    encoded_messages, message_entities = generate_message_array(2, real_message, carrier_image)
     send_message(team_id, encoded_messages, message_entities)
 
 
@@ -297,6 +312,6 @@ def submit_fox_attempt(team_id):
     
     end_fox(team_id)
 
-#submit_fox_attempt(team_id)
+submit_fox_attempt(team_id)
 
 
