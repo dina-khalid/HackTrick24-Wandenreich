@@ -93,14 +93,14 @@ def infer(input_data):
     global loaded_svm
     global loaded_pca
     
-    pro_data = preprocess_input_data(input_data)
+    pro_data, indx = preprocess_input_data(input_data)
 
     input_pca = loaded_pca.transform(pro_data.reshape(pro_data.shape[0], -1))
 
     # Make predictions
     probabilities = loaded_svm.predict_proba(input_pca)[:, 1]  # Assuming binary classification
 
-    return probabilities
+    return probabilities, indx
 def infer1(input_data):
     global loaded_model
     # Preprocess input data
@@ -120,7 +120,7 @@ def select_channel(footprint):
     Refer to the documentation of the Footprints to know more what the footprints represent to guide you in your approach.        
     '''
     probabilities, indx = infer(footprint)
-    threshold = 0.5
+    threshold = 0.55
     if max(probabilities) > threshold:
         ch = list(probabilities).index(max(probabilities)) 
         return indx[ch]+ 1
@@ -349,10 +349,10 @@ def submit_eagle_attempt(team_id:str):
 
     end_eagle(team_id)
 
-#submit_eagle_attempt(team_id)
-real = np.load('real.npz')
-real_x = real['x']
-input_data =  {'1': list(real_x[0]), '2':list(real_x[1]), '3':list(real_x[2])}
-channel_id = select_channel(input_data)
-print(channel_id)   
+submit_eagle_attempt(team_id)
+#real = np.load('real.npz')
+#real_x = real['x']
+#input_data =  {'1': list(real_x[0]), '2':list(real_x[1]), '3':list(real_x[2])}
+#channel_id = select_channel(input_data)
+#print(channel_id)   
 

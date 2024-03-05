@@ -11,10 +11,10 @@ def loaded_model(pth_model):
     return loaded_model
 
 
-model = loaded_model('arima_model.pkl')
+
 
 api_base_url = "http://16.171.171.147:5000"
-#team_id="bVUrA0A"
+team_id="bVUrA0A"
 
 def init_fox(team_id: str):
     """
@@ -257,8 +257,7 @@ def submit_fox_attempt(team_id):
         3. Refer To the documentation to know more about the API handling 
     '''
     global api_base_url
-    global model
-
+   
     real_message, carrier_image = init_fox(team_id)
 
     riddle_id = "problem_solving_easy"
@@ -266,38 +265,24 @@ def submit_fox_attempt(team_id):
     test_case = get_riddle(team_id, riddle_id)
     # solve the riddle
     inc, budget, status = solve_riddle(team_id, riddle_solvers[riddle_id](test_case))
-    if inc == 1: print("the soluion of the medium problem solving riddle is correct")
-    else: print("the soluion of the medium problem solving riddle is wrong")
-
+   
     riddle_id = "problem_solving_medium"
     test_case = get_riddle(team_id, riddle_id)
     inc, budget, status = solve_riddle(team_id, riddle_solvers[riddle_id](test_case))
-    if inc == 2: print("the soluion of the medium problem solving riddle is correct")
-    else: print("the soluion of the medium problem solving riddle is wrong")
-
+   
     riddle_id = "problem_solving_hard"
     test_case = get_riddle(team_id, riddle_id)
     inc, budget, status = solve_riddle(team_id, riddle_solvers[riddle_id](test_case))
-    if inc == 3: print("the soluion of the medium problem solving riddle is correct")
-    else: print("the soluion of the medium problem solving riddle is wrong")
-
     
-    riddle_id = "ml_easy"
-    test_case = get_riddle(team_id, riddle_id)
 
-    inc, budget, status = solve_riddle(team_id, riddle_solvers[riddle_id](test_case, model))
-    if inc == 1: print("the soluion of the medium problem solving riddle is correct")
-    else: print("the soluion of the medium problem solving riddle is wrong")
+   # riddle_id = "sec_hard"
+  #  test_case = get_riddle(team_id, riddle_id)
 
-    riddle_id = "sec_hard"
-    test_case = get_riddle(team_id, riddle_id)
-
-    inc, budget, status = solve_riddle(team_id, riddle_solvers[riddle_id](test_case, model))
-    if inc == 3: print("the soluion of the medium problem solving riddle is correct")
-    else: print("the soluion of the medium problem solving riddle is wrong")
-
+ #   inc, budget, status = solve_riddle(team_id, riddle_solvers[riddle_id](test_case))
+  
     encoded_messages, message_entities = generate_message_array(real_message, carrier_image)
     send_message(team_id, encoded_messages, message_entities)
 
     
     end_fox(team_id)
+submit_fox_attempt(team_id)
