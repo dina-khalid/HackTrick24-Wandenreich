@@ -1,23 +1,13 @@
 import numpy as np
 from LSBSteg import decode
-import tensorflow as tf
 import requests
 import os
-import datetime
-
+import joblib
 api_base_url = 'http://16.171.171.147:5000'
-#team_id= "bVUrA0A"
-model_path = 'cnn_dell.h5'
-loaded_model = tf.keras.models.load_model(model_path)
+team_id= "bVUrA0A"
+loaded_svm = joblib.load('svm_model.joblib')
+loaded_pca = joblib.load('pca_model.joblib')
 
-def log(msg):
-    t = datetime.datetime.now()
-    time = t.strftime("[%d.%m.%y] Time - %H_%M_%S")
-    log_msg = str(msg)
-    
-
-    with open(time + ".log",'a+') as file:
-        file.write(log_msg + "\n")
 def init_eagle(team_id):
     '''
     In this fucntion you need to hit to the endpoint to start the game as an eagle with your team id.
@@ -79,8 +69,20 @@ def preprocess_input_data(input_data):
     processed_data = processed_data / 255.0
     
     return processed_data
-
 def infer(input_data):
+    # Load the saved model and data
+    global loaded_svm
+    global loaded_pca
+    
+    pro_data = preprocess_input_data(input_data)
+
+    input_pca = loaded_pca.transform(pro_data.reshape(pro_data.shape[0], -1))
+
+    # Make predictions
+    probabilities = loaded_svm.predict_proba(input_pca)[:, 1]  # Assuming binary classification
+
+    return probabilities
+def infer1(input_data):
     global loaded_model
     # Preprocess input data
     pro_data = preprocess_input_data(input_data)
@@ -318,9 +320,14 @@ def submit_eagle_attempt(team_id:str):
     '''
     footprint = init_eagle(team_id)
     while footprint:
-        log(str(footprint))
+        try:
+    	        json_string = json.dumps(footprint, indent=3)
+                with open('outputfile.json', 'a') as outf:
+    			outf.write(json_string)	       
+   	except e:
+		print(e)
         channel_id = select_channel(footprint)
-        log(channel_id)
+        
         if channel_id == -1:
             footprint = skip_msg(team_id)
         else:
@@ -331,11 +338,11 @@ def submit_eagle_attempt(team_id:str):
     end_eagle(team_id)
 
 #submit_eagle_attempt(team_id)
-#real = np.load('real.npz')
-#real_x = real['x']
-#input_data =  {'1': list(real_x[0]), '2':list(real_x[1]), '3':list(real_x[2])}
-#channel_id = select_channel(input_data)
-#print(channel_id)   
+real = np.load('real.npz')
+real_x = real['x']
+input_data =  {'1': list(real_x[0]), '2':list(real_x[1]), '3':list(real_x[2])}
+channel_id = select_channel(input_data)
+print(channel_id)   
 #url ="http://13.53.169.72:5000/attempts/professional"
 #data = {
  #        "teamId": team_id

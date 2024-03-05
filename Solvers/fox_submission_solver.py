@@ -13,7 +13,7 @@ from riddle_solvers import riddle_solvers
 # model = loaded_model('arima_model.pkl')
 
 api_base_url = "http://16.171.171.147:5000"
-team_id="bVUrA0A"
+#team_id="bVUrA0A"
 
 def init_fox(team_id: str):
     """
