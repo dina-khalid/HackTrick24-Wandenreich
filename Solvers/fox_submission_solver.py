@@ -11,10 +11,10 @@ def loaded_model(pth_model):
     return loaded_model
 
 
-model = loaded_model('/home/dina/HackTrick24/Solvers/arima_model.pkl')
+model = loaded_model('arima_model.pkl')
 
 api_base_url = "http://16.171.171.147:5000"
-# team_id="bVUrA0A"
+#team_id="bVUrA0A"
 
 def init_fox(team_id: str):
     """
@@ -49,7 +49,7 @@ def init_fox(team_id: str):
         carrier_image = res["carrier_image"]
         return real_message, np.array(carrier_image)
     else:
-        print("An Error occurred! status code:", res.status_code)
+        print("Error in start! status code:", res.status_code)
     '''
     In this fucntion you need to hit to the endpoint to start the game as a fox with your team id.
     If a sucessful response is returned, you will recive back the message that you can break into chunkcs
@@ -66,9 +66,9 @@ def generate_message_array(message: str, image_carrier: np.array):
     '''
     # simple algo that sends the message in one chunk
     fake = ["Dellete", 'Deloite']
-    encoded_message = encode(image_carrier, message)
-    enc_fake1 = encode(image_carrier, fake[0])
-    enc_fake2 = encode(image_carrier, fake[1])
+    encoded_message = encode(image_carrier.copy(), message)
+    enc_fake1 = encode(image_carrier.copy(), fake[0])
+    enc_fake2 = encode(image_carrier.copy(), fake[1])
     return [encoded_message.tolist(), enc_fake1.tolist(), enc_fake2.tolist()], ['R', 'F', 'F']
 
 
@@ -200,7 +200,7 @@ def send_message(team_id, messages, message_entities=['F', 'E', 'R']):
     if res.ok:
         print(res.text)
     else:
-        print("An Error occurred! status code:", res.status_code)
+        print("An Error in Send msg", res.status_code)
 
    
 def end_fox(team_id):
@@ -209,7 +209,7 @@ def end_fox(team_id):
     Note that:
     1. Not calling this fucntion will cost you in the scoring function
     2. Calling it without sending all the real messages will also affect your scoring fucntion
-      (Like failing to submit the entire message within the timelimit of the game).
+      (Like failing to submit the entire messageres.status_code within the timelimit of the game).
     '''
     """
      Endpoint: /fox/end-game
@@ -285,7 +285,7 @@ def submit_fox_attempt(team_id):
     test_case = get_riddle(team_id, riddle_id)
 
     inc, budget, status = solve_riddle(team_id, riddle_solvers[riddle_id](test_case, model))
-    if inc == 4: print("the soluion of the medium problem solving riddle is correct")
+    if inc == 1: print("the soluion of the medium problem solving riddle is correct")
     else: print("the soluion of the medium problem solving riddle is wrong")
 
     encoded_messages, message_entities = generate_message_array(real_message, carrier_image)
@@ -297,4 +297,6 @@ def submit_fox_attempt(team_id):
     
     end_fox(team_id)
 
-submit_fox_attempt(team_id)
+#submit_fox_attempt(team_id)
+
+

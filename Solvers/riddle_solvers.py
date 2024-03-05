@@ -1,11 +1,10 @@
 # Add the necessary imports here
 import pandas as pd
-import torch
 import numpy as np
 
 
 def make_prediction(df,model):
-    return list(model.forecast(steps=df.shape[0]))
+    return list(model.forecast(steps=len(df)))
     
 
 def solve_cv_easy(test_case: tuple) -> list:
@@ -87,8 +86,8 @@ def solve_ml_medium(input: list) -> int:
 
 
 
-def solve_sec_medium(input: torch.Tensor) -> str:
-    img = torch.tensor(img)
+def solve_sec_medium(input) :
+    #img = torch.tensor(img)
     """
     This function takes a torch.Tensor as input and returns a string as output.
 
@@ -112,7 +111,6 @@ def solve_sec_hard(input:tuple)->str:
     Returns:
     list:A string of ciphered text
     """
-    
     return ''
 
 def solve_problem_solving_easy(input: tuple) -> list:

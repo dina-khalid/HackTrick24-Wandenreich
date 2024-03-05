@@ -4,8 +4,8 @@ import tensorflow as tf
 import requests
 
 api_base_url = 'http://16.171.171.147:5000'
-team_id= "bVUrA0A"
-model_path = 'cnn_dell.h5'
+#team_id= "bVUrA0A"
+model_path = 'cnn_del_mod.h5'
 loaded_model = tf.keras.models.load_model(model_path)
 
 
@@ -290,7 +290,7 @@ def end_eagle(team_id:str):
     res = requests.post(url, json=data)
 
     if res.ok:
-        print(f"end {res}")
+        print(f"end {res} json {res.text}")
 
     else:
         return None
@@ -303,7 +303,7 @@ def submit_eagle_attempt(team_id:str):
      In this function you should:
         1. Initialize the game as fox 
         2. Solve the footprints to know which channel to listen on if any.
-        3. Select a channel to hear on OR send skip request.
+        3. Selet a channel to hear on OR send skip request.
         4. Submit your answer in case you listened on any channel
         5. End the Game
     '''
@@ -320,10 +320,14 @@ def submit_eagle_attempt(team_id:str):
     end_eagle(team_id)
 
 #submit_eagle_attempt(team_id)
-    
-# url ="http://13.53.169.72:5000/attempts/professional"
-# data = {
-#         "teamId": team_id
-#         }
-# res = requests.post(url, json=data)
-# print(res.ok)
+#real = np.load('real.npz')
+#real_x = real['x']
+#input_data =  {'1': list(real_x[0]), '2':list(real_x[1]), '3':list(real_x[2])}
+#channel_id = select_channel(input_data)
+#print(channel_id)   
+#url ="http://13.53.169.72:5000/attempts/professional"
+#data = {
+ #        "teamId": team_id
+  #       }
+#res = requests.post(url, json=data)
+#print(res.ok)
