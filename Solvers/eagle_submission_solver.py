@@ -2,13 +2,22 @@ import numpy as np
 from LSBSteg import decode
 import tensorflow as tf
 import requests
+import os
+import datetime
 
 api_base_url = 'http://16.171.171.147:5000'
 #team_id= "bVUrA0A"
-model_path = 'cnn_del_mod.h5'
+model_path = 'cnn_dell.h5'
 loaded_model = tf.keras.models.load_model(model_path)
 
+def log(msg):
+    t = datetime.datetime.now()
+    time = t.strftime("[%d.%m.%y] Time - %H_%M_%S")
+    log_msg = str(msg)
+    
 
+    with open(time + ".log",'a+') as file:
+        file.write(log_msg + "\n")
 def init_eagle(team_id):
     '''
     In this fucntion you need to hit to the endpoint to start the game as an eagle with your team id.
@@ -309,7 +318,9 @@ def submit_eagle_attempt(team_id:str):
     '''
     footprint = init_eagle(team_id)
     while footprint:
+        log(str(footprint))
         channel_id = select_channel(footprint)
+        log(channel_id)
         if channel_id == -1:
             footprint = skip_msg(team_id)
         else:
