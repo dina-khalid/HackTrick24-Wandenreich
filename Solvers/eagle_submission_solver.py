@@ -77,20 +77,14 @@ def preprocess_input_data(input_data):
     # Extract and preprocess features as needed
     processed_data = np.array([np.array(input_data[str(i)]) for i in range(1, 4)])
     processed_data_mag = [np.abs(processed_data[i]).sum() for i in range(3)]
-    non_noise = []
-    max_mags = []
-    for i in range(2):
 
-        max_mag = np.argmax(processed_data_mag)
-        min_mag = np.argmin(processed_data_mag)
-        if processed_data_mag[max_mag]/processed_data_mag[min_mag] >= 10:
-            #print("Real")
-            non_noise.append(processed_data[max_mag])
-            max_mags.append(max_mag)
-            # pop the max_mag
-            processed_data = np.delete(processed_data, max_mag, axis=0)
 
-    processed_data = np.clip(non_noise, a_min=None, a_max=1e2)
+    min_mag = np.argmin(processed_data_mag)
+    processed_data = np.delete(processed_data, min_mag, axis=0)
+    # inds that not min_mag
+    max_mags = [i for i in range(3) if i != min_mag]
+
+    processed_data = np.clip(processed_data, a_min=None, a_max=1e2)
     processed_data = processed_data / 255.0
     
     return processed_data, max_mags
@@ -295,9 +289,6 @@ def submit_msg(team_id:str, decoded_msg:str):
 
 
 
-
-
-  
 def end_eagle(team_id:str):
     '''
     Use this function to call the api end point of ending the eagle  game.
