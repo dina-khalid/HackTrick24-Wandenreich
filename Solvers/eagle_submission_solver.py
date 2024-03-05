@@ -49,8 +49,18 @@ def init_eagle(team_id):
         return footprint
     else:
         return None
+'''
+def mag(img):
+    return np.abs(img).sum()
+mags = []
+for img in imgs:
+    mags.append(mag(img))
 
-
+biggest = max(mags)
+if biggest/min(mags)  >=10:
+    it is real  else it is not real
+'''
+  
 
 
 def preprocess_input_data(input_data):
@@ -66,10 +76,24 @@ def preprocess_input_data(input_data):
 
     # Extract and preprocess features as needed
     processed_data = np.array([np.array(input_data[str(i)]) for i in range(1, 4)])
-    processed_data = np.clip(processed_data, a_min=None, a_max=1e2)
+    processed_data_mag = [np.abs(processed_data[i]).sum() for i in range(3)]
+    non_noise = []
+    max_mags = []
+    for i in range(2):
+
+        max_mag = np.argmax(processed_data_mag)
+        min_mag = np.argmin(processed_data_mag)
+        if processed_data_mag[max_mag]/processed_data_mag[min_mag] >= 10:
+            #print("Real")
+            non_noise.append(processed_data[max_mag])
+            max_mags.append(max_mag)
+            # pop the max_mag
+            processed_data = np.delete(processed_data, max_mag, axis=0)
+
+    processed_data = np.clip(non_noise, a_min=None, a_max=1e2)
     processed_data = processed_data / 255.0
     
-    return processed_data
+    return processed_data, max_mags
 def infer(input_data):
     # Load the saved model and data
     global loaded_svm
@@ -86,13 +110,13 @@ def infer(input_data):
 def infer1(input_data):
     global loaded_model
     # Preprocess input data
-    pro_data = preprocess_input_data(input_data)
+    pro_data, indx = preprocess_input_data(input_data)
     input_data_reshaped = pro_data.reshape((pro_data.shape[0],) + pro_data.shape[1:] + (1,))
 
     # Perform inference
     predictions_prob = loaded_model.predict(input_data_reshaped)
 
-    return predictions_prob
+    return predictions_prob,indx
 
 def select_channel(footprint):
     '''
@@ -101,10 +125,12 @@ def select_channel(footprint):
     Your goal is to try to catch all the real messages and skip the fake and the empty ones.
     Refer to the documentation of the Footprints to know more what the footprints represent to guide you in your approach.        
     '''
-    probabilities = infer(footprint)
+    probabilities, indx = infer(footprint)
     threshold = 0.5
     if max(probabilities) > threshold:
-        return list(probabilities).index(max(probabilities)) + 1
+        ch = list(probabilities).index(max(probabilities)) 
+        return indx[ch]+ 1
+
     else:
         return -1
 
@@ -321,6 +347,7 @@ def submit_eagle_attempt(team_id:str):
     '''
     footprint = init_eagle(team_id)
     while footprint:
+
         channel_id = select_channel(footprint)
         if channel_id == -1:
             footprint = skip_msg(team_id)
@@ -337,9 +364,4 @@ real_x = real['x']
 input_data =  {'1': list(real_x[0]), '2':list(real_x[1]), '3':list(real_x[2])}
 channel_id = select_channel(input_data)
 print(channel_id)   
-#url ="http://13.53.169.72:5000/attempts/professional"
-#data = {
- #        "teamId": team_id
-  #       }
-#res = requests.post(url, json=data)
-#print(res.ok)
+
