@@ -321,14 +321,7 @@ def submit_eagle_attempt(team_id:str):
     '''
     footprint = init_eagle(team_id)
     while footprint:
-        try:
-            json_string = json.dumps(footprint, indent=3)
-            with open('outputfile.json', 'a') as outf:
-                outf.write(json_string + '\n')  # Add a newline between JSON strings
-        except Exception as e:  # Catching all exceptions
-            print(f"Error: {e}")
         channel_id = select_channel(footprint)
-        
         if channel_id == -1:
             footprint = skip_msg(team_id)
         else:
